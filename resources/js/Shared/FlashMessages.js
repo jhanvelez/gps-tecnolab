@@ -84,7 +84,7 @@ export default () => {
           <Alert.Heading>Error!</Alert.Heading>
             <p>
               {flash.error && flash.error}
-              {numOfErrors === 1 && 'There is one form error'}
+              {numOfErrors === 1 && 'Hay un error de formulario'}
               {numOfErrors > 1 && `There are ${numOfErrors} form errors.`}
             </p>
         </Alert>

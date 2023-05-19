@@ -7,6 +7,7 @@ use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\GroupsCollection;
 use App\Http\Resources\GroupsResource;
+use App\Models\Organization;
 use App\Models\Grupos;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
@@ -31,7 +32,9 @@ class GroupsController extends Controller
 
     public function create()
     {
-        return Inertia::render('Groups/Create');
+        return Inertia::render('Groups/Create',[
+            'organizations' => Organization::select('name', 'id')->orderBy('name')->get()
+        ]);
     }
 
     public function store(UserStoreRequest $request)

@@ -7,6 +7,7 @@ use App\Http\Requests\DriverUpdateRequest;
 use App\Http\Resources\DriverCollection;
 use App\Http\Resources\DriverResource;
 use Inertia\Inertia;
+use App\Models\Driver;
 use App\Models\Organization;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
@@ -19,8 +20,8 @@ class DriversController extends Controller
         return Inertia::render('Drivers/Index', [
             'filters' => Request::all('search', 'trashed'),
             'drivers' => new DriverCollection(
-                Auth::user()->account->organizations()
-                    ->orderBy('name')
+                Auth::user()->account->drivers()
+                    ->orderBy('nombres')
                     ->filter(Request::only('search', 'trashed'))
                     ->paginate()
                     ->appends(Request::all())
@@ -30,22 +31,25 @@ class DriversController extends Controller
 
     public function create()
     {
-        return Inertia::render('Drivers/Create');
+        return Inertia::render('Drivers/Create',[
+            'organizations' => Organization::select('name', 'id')->orderBy('name')->get()
+        ]);
     }
 
-    public function store(OrganizationStoreRequest $request)
+    public function store(DriverStoreRequest $request)
     {
-        Auth::user()->account->organizations()->create(
+        Auth::user()->account->drivers()->create(
             $request->validated()
         );
 
-        return Redirect::route('organizations')->with('success', 'Organization created.');
+        return Redirect::route('drivers')->with('success', 'Conductor creado.');
     }
 
-    public function edit(Organization $organization)
+    public function edit(Driver $driver)
     {
-        return Inertia::render('Organizations/Edit', [
-            'organization' => new OrganizationResource($organization),
+        return Inertia::render('Drivers/Edit', [
+            'driver' => new DriverResource($driver),
+            'organizations' => Organization::select('name', 'id')->orderBy('name')->get()
         ]);
     }
 

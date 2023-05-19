@@ -1,26 +1,23 @@
 import React from 'react';
-import { Inertia } from '@inertiajs/inertia';
-import { InertiaLink, useForm } from '@inertiajs/inertia-react';
+import { InertiaLink, useForm, usePage } from '@inertiajs/inertia-react';
 import Layout from '@/Shared/LayoutManagement';
 import LoadingButton from '@/Shared/LoadingButton';
 import TextInput from '@/Shared/TextInput';
 import SelectInput from '@/Shared/SelectInput';
 
 const Create = () => {
+  const { organizations } = usePage().props;
+
   const { data, setData, errors, post, processing } = useForm({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    region: '',
-    country: '',
-    postal_code: ''
+    documento: '',
+    nombres: '',
+    apellidos: '',
+    organization: 0
   });
 
   function handleSubmit(e) {
     e.preventDefault();
-    post(route('organizations.store'));
+    post(route('drivers.store'));
   }
 
   return (
@@ -30,112 +27,65 @@ const Create = () => {
           <div className="card-header pb-0">
             <h5 className="mb-0">
               <InertiaLink
-                href={route('organizations')}
+                href={route('drivers')}
                 className="text-indigo-600 hover:text-indigo-700"
               >
-                Empresas
+                Conductores
               </InertiaLink>
-              <span> /</span> Crear
+              <span> /</span> crear
             </h5>
             <div className="card-body pt-4 p-3 row">
               <form onSubmit={handleSubmit}>
                 <div className="row">
                   <div className="col-md-6 col-sm-12">
                     <TextInput
-                      className="pb-4 pr-3"
-                      label="Nombre"
-                      name="name"
-                      errors={errors.name}
-                      value={data.name}
-                      onChange={e => setData('name', e.target.value)}
-                    />
-                  </div>
-
-                  <div className="col-md-6 col-sm-12">
-                    <TextInput
                       className="pb-4 pr-3 "
-                      label="Email"
-                      name="email"
-                      type="email"
-                      errors={errors.email}
-                      value={data.email}
-                      onChange={e => setData('email', e.target.value)}
-                    />
-                  </div>
-
-                  <div className="col-md-6 col-sm-12">
-                    <TextInput
-                      className="pb-4 pr-3"
-                      label="Número de telefono"
-                      name="phone"
-                      type="text"
-                      errors={errors.phone}
-                      value={data.phone}
-                      onChange={e => setData('phone', e.target.value)}
-                    />
-                  </div>
-
-                  <div className="col-md-6 col-sm-12">
-                    <TextInput
-                      className="pb-4 pr-3"
-                      label="Dirección"
-                      name="address"
-                      type="text"
-                      errors={errors.address}
-                      nom
-                      value={data.address}
-                      onChange={e => setData('address', e.target.value)}
-                    />
-                  </div>
-
-                  <div className="col-md-6 col-sm-12">
-                    <TextInput
-                      className="pb-4 pr-3"
-                      label="Ciudad"
-                      name="city"
-                      type="text"
-                      errors={errors.city}
-                      value={data.city}
-                      onChange={e => setData('city', e.target.value)}
-                    />
-                  </div>
-
-                  <div className="col-md-6 col-sm-12">
-                    <TextInput
-                      className="pb-4 pr-3"
-                      label="Province/State"
-                      name="Region"
-                      type="text"
-                      errors={errors.region}
-                      value={data.region}
-                      onChange={e => setData('region', e.target.value)}
+                      label="Documento"
+                      name="documento"
+                      type="number"
+                      errors={errors.documento}
+                      value={data.documento}
+                      onChange={e => setData('documento', e.target.value)}
                     />
                   </div>
 
                   <div className="col-md-6 col-sm-12">
                     <SelectInput
                       className="pb-4 pr-3"
-                      label="País"
-                      name="country"
-                      errors={errors.country}
-                      value={data.country}
-                      onChange={e => setData('country', e.target.value)}
+                      label="Empresa"
+                      name="organization"
+                      errors={errors.organization}
+                      value={data.organization}
+                      onChange={e => setData('organization', e.target.value)}
                     >
-                      <option value=""></option>
-                      <option value="CA">Canada</option>
-                      <option value="US">United States</option>
+                      <option>seleccionar empresa</option>
+                      {organizations.map((driver, index) => {
+                        return (<option key={index} value={driver.id}>{driver.name}</option>)
+                      })}
                     </SelectInput>
                   </div>
 
                   <div className="col-md-6 col-sm-12">
                     <TextInput
                       className="pb-4 pr-3"
-                      label="Codigo postal"
-                      name="postal_code"
+                      label="Nombres"
+                      name="nombres"
                       type="text"
-                      errors={errors.postal_code}
-                      value={data.postal_code}
-                      onChange={e => setData('postal_code', e.target.value)}
+                      errors={errors.nombres}
+                      value={data.nombres}
+                      onChange={e => setData('nombres', e.target.value)}
+                    />
+                  </div>
+
+                  <div className="col-md-6 col-sm-12">
+                    <TextInput
+                      className="pb-4 pr-3 "
+                      label="Apellidos"
+                      name="apellidos"
+                      type="text"
+                      errors={errors.apellidos}
+                      value={data.apellidos}
+                      onChange={e => setData('apellidos', e.target.value)}
                     />
                   </div>
                 </div>
@@ -145,7 +95,7 @@ const Create = () => {
                     type="submit"
                     className="btn btn-success"
                   >
-                    Crear empresa
+                    Crear conductor
                   </LoadingButton>
                 </div>
               </form>

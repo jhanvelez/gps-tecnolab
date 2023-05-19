@@ -11,32 +11,28 @@ import TrashedMessage from '@/Shared/TrashedMessage';
 import Icon from '@/Shared/Icon';
 
 const Edit = () => {
-  const { organization } = usePage().props;
+  const { driver, organizations } = usePage().props;
   const { data, setData, errors, put, processing } = useForm({
-    name: organization.name || '',
-    email: organization.email || '',
-    phone: organization.phone || '',
-    address: organization.address || '',
-    city: organization.city || '',
-    region: organization.region || '',
-    country: organization.country || '',
-    postal_code: organization.postal_code || '' 
+    documento: driver.documento || '',
+    nombres: driver.nombres || '',
+    apellidos: driver.apellidos || '',
+    organization: driver.organization || ''
   });
 
   function handleSubmit(e) {
     e.preventDefault();
-    put(route('organizations.update', organization.id));
+    put(route('drivers.update', driver.id));
   }
 
   function destroy() {
-    if (confirm('Are you sure you want to delete this organization?')) {
-      Inertia.delete(route('organizations.destroy', organization.id));
+    if (confirm('¿Está seguro de que desea eliminar este conductor?')) {
+      Inertia.delete(route('drivers.destroy', driver.id));
     }
   }
 
   function restore() {
-    if (confirm('Are you sure you want to restore this organization?')) {
-      Inertia.put(route('organizations.restore', organization.id));
+    if (confirm('¿Estás seguro de que quieres restaurar este conductor?')) {
+      Inertia.put(route('organizations.restore', driver.id));
     }
   }
 
@@ -49,17 +45,19 @@ const Edit = () => {
               <Helmet title={data.name} />
               <h5 className="mb-0">
                 <InertiaLink
-                  href={route('organizations')}
+                  href={route('drivers')}
                   className="text-indigo-600 hover:text-indigo-700"
                 >
-                  Empresas
+                  Conductores
                 </InertiaLink>
-                <span className="mx-2 font-medium text-indigo-600">/</span>
+                <span className="mx-2 font-medium text-indigo-600">
+                  / Editar
+                </span>
                 {data.name}
               </h5>
-              {organization.deleted_at && (
+              {driver.deleted_at && (
                 <TrashedMessage onRestore={restore}>
-                  Esta organización ha sido suprimida.
+                  Este conductor ha sido eliminado.
                 </TrashedMessage>
               )}
               <div className="max-w-3xl overflow-hidden">
@@ -67,106 +65,64 @@ const Edit = () => {
                   <div className="flex flex-wrap p-4 -mb-4 -mr-3 row">
                     <div className="col-md-6 col-sm-12">
                       <TextInput
-                        className="pb-4 pr-3"
-                        label="Nombre"
-                        name="name"
-                        errors={errors.name}
-                        value={data.name}
-                        onChange={e => setData('name', e.target.value)}
-                      />
-                    </div>
-
-                    <div className="col-md-6 col-sm-12">
-                      <TextInput
-                        className="pb-4 pr-3"
-                        label="Correo electronico"
-                        name="email"
-                        type="email"
-                        errors={errors.email}
-                        value={data.email}
-                        onChange={e => setData('email', e.target.value)}
-                      />
-                    </div>
-
-                    <div className="col-md-6 col-sm-12">
-                      <TextInput
-                        className="pb-4 pr-3"
-                        label="Telefono"
-                        name="phone"
-                        type="text"
-                        errors={errors.phone}
-                        value={data.phone}
-                        onChange={e => setData('phone', e.target.value)}
-                      />
-                    </div>
-
-                    <div className="col-md-6 col-sm-12">
-                      <TextInput
-                        className="pb-4 pr-3"
-                        label="Dirección"
-                        name="address"
-                        type="text"
-                        errors={errors.address}
-                        value={data.address}
-                        onChange={e => setData('address', e.target.value)}
-                      />
-                    </div>
-
-                    <div className="col-md-6 col-sm-12">
-                      <TextInput
-                        className="pb-4 pr-3"
-                        label="Ciudad"
-                        name="city"
-                        type="text"
-                        errors={errors.city}
-                        value={data.city}
-                        onChange={e => setData('city', e.target.value)}
-                      />
-                    </div>
-
-                    <div className="col-md-6 col-sm-12">
-                      <TextInput
-                        className="pb-4 pr-3"
-                        label="Departamento"
-                        name="region"
-                        type="text"
-                        errors={errors.region}
-                        value={data.region}
-                        onChange={e => setData('region', e.target.value)}
+                        className="pb-4 pr-3 "
+                        label="Documento"
+                        name="documento"
+                        type="number"
+                        errors={errors.documento}
+                        value={data.documento}
+                        onChange={e => setData('documento', e.target.value)}
                       />
                     </div>
 
                     <div className="col-md-6 col-sm-12">
                       <SelectInput
                         className="pb-4 pr-3"
-                        label="País"
-                        name="country"
-                        errors={errors.country}
-                        value={data.country}
-                        onChange={e => setData('country', e.target.value)}
+                        label="Empresa"
+                        name="organization"
+                        errors={errors.organization}
+                        value={data.organization}
+                        onChange={e => setData('organization', e.target.value)}
                       >
-                        <option value=""></option>
-                        <option value="CA">Canada</option>
-                        <option value="US">United States</option>
+                        <option>seleccionar empresa</option>
+                        {organizations.map((driver, index) => {
+                          return (
+                            <option key={index} value={driver.id}>
+                              {driver.name}
+                            </option>
+                          );
+                        })}
                       </SelectInput>
                     </div>
 
                     <div className="col-md-6 col-sm-12">
                       <TextInput
                         className="pb-4 pr-3"
-                        label="Codigo postal"
-                        name="postal_code"
+                        label="Nombres"
+                        name="nombres"
                         type="text"
-                        errors={errors.postal_code}
-                        value={data.postal_code}
-                        onChange={e => setData('postal_code', e.target.value)}
+                        errors={errors.nombres}
+                        value={data.nombres}
+                        onChange={e => setData('nombres', e.target.value)}
+                      />
+                    </div>
+
+                    <div className="col-md-6 col-sm-12">
+                      <TextInput
+                        className="pb-4 pr-3 "
+                        label="Apellidos"
+                        name="apellidos"
+                        type="text"
+                        errors={errors.apellidos}
+                        value={data.apellidos}
+                        onChange={e => setData('apellidos', e.target.value)}
                       />
                     </div>
                   </div>
                   <div className="px-4 py-2 d-flex justify-content-end">
-                    {!organization.deleted_at && (
+                    {!driver.deleted_at && (
                       <DeleteButton onDelete={destroy}>
-                        Eliminar empresa
+                        Eliminar coductor
                       </DeleteButton>
                     )}
                     <LoadingButton
@@ -174,89 +130,10 @@ const Edit = () => {
                       type="submit"
                       className="ml-auto btn-indigo"
                     >
-                      Actualizar empresa
+                      Actualizar conductor
                     </LoadingButton>
                   </div>
                 </form>
-              </div>
-
-              <h5 className="mb-0">Contactos</h5>
-              <div className="mt-2 overflow-x-auto">
-                <table className="w-full whitespace-nowrap">
-                  <thead>
-                    <tr className="font-bold text-left">
-                      <th className="px-6 pt-5 pb-4">Nombre</th>
-                      <th className="px-6 pt-5 pb-4">Ciudad</th>
-                      <th className="px-6 pt-5 pb-4" colSpan="2">
-                        Telefono
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {organization.contacts.map(
-                      ({ id, name, phone, city, deleted_at }) => {
-                        return (
-                          <tr
-                            key={id}
-                            className="hover:bg-gray-100 focus-within:bg-gray-100"
-                          >
-                            <td className="border-t">
-                              <InertiaLink
-                                href={route('contacts.edit', id)}
-                                className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
-                              >
-                                {name}
-                                {deleted_at && (
-                                  <Icon
-                                    name="trash"
-                                    className="flex-shrink-0 w-3 h-3 ml-2 text-gray-400 fill-current"
-                                  />
-                                )}
-                              </InertiaLink>
-                            </td>
-                            <td className="border-t">
-                              <InertiaLink
-                                tabIndex="-1"
-                                href={route('contacts.edit', id)}
-                                className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
-                              >
-                                {city}
-                              </InertiaLink>
-                            </td>
-                            <td className="border-t">
-                              <InertiaLink
-                                tabIndex="-1"
-                                href={route('contacts.edit', id)}
-                                className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
-                              >
-                                {phone}
-                              </InertiaLink>
-                            </td>
-                            <td className="w-px border-t">
-                              <InertiaLink
-                                tabIndex="-1"
-                                href={route('contacts.edit', id)}
-                                className="flex items-center px-4"
-                              >
-                                <Icon
-                                  name="cheveron-right"
-                                  className="block w-6 h-6 text-gray-400 fill-current"
-                                />
-                              </InertiaLink>
-                            </td>
-                          </tr>
-                        );
-                      }
-                    )}
-                    {organization.contacts.length === 0 && (
-                      <tr>
-                        <td className="px-6 py-4 border-t" colSpan="4">
-                          No se han encontrado contactos.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
               </div>
             </div>
           </div>

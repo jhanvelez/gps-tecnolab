@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class OrganizationStoreRequest extends FormRequest
+class DriverStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,7 +27,7 @@ class OrganizationStoreRequest extends FormRequest
             'documento' => ['required', 'max:100'],
             'nombres' => ['required', 'max:50'],
             'apellidos' => ['required', 'max:50'],
-            'oirganization' => ['nullable', 'max:150'],
+            'organization' => ['required', 'max:150']
         ];
     }
 }

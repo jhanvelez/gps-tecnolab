@@ -1,6 +1,5 @@
 import React from 'react';
-import { Inertia } from '@inertiajs/inertia';
-import { InertiaLink, useForm } from '@inertiajs/inertia-react';
+import { InertiaLink, useForm, usePage } from '@inertiajs/inertia-react';
 import Layout from '@/Shared/LayoutManagement';
 import LoadingButton from '@/Shared/LoadingButton';
 import TextInput from '@/Shared/TextInput';
@@ -8,8 +7,11 @@ import SelectInput from '@/Shared/SelectInput';
 import FileInput from '@/Shared/FileInput';
 
 const Create = () => {
+  const { organizations } = usePage().props;
+
   const { data, setData, errors, post, processing } = useForm({
-    titulo: ''
+    titulo: '',
+    organization: 0
   });
 
   function handleSubmit(e) {
@@ -47,6 +49,22 @@ const Create = () => {
                         onChange={e => setData('titulo', e.target.value)}
                       />
                     </div>
+                  </div>
+
+                  <div className="col-md-6 col-sm-12">
+                    <SelectInput
+                      className="pb-4 pr-3"
+                      label="Empresa"
+                      name="organization"
+                      errors={errors.organization}
+                      value={data.organization}
+                      onChange={e => setData('organization', e.target.value)}
+                    >
+                      <option>seleccionar empresa</option>
+                      {organizations.map((organization, index) => {
+                        return (<option key={index} value={organization.id}>{organization.name}</option>)
+                      })}
+                    </SelectInput>
                   </div>
 
                   <div className="col-md-12 d-flex justify-content-end">

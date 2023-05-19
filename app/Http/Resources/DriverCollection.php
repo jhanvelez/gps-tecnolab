@@ -15,7 +15,7 @@ class DriverCollection extends ResourceCollection
     public function toArray($request)
     {
         return $this->collection->map->only(
-            'id', 'documento', 'nombres', 'apellidos', 'organization', 'deleted_at'
+            'id', 'documento', 'nombres', 'apellidos', 'organization', 'created_at', 'deleted_at'
         );
     }
 }
