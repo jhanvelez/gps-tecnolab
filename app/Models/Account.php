@@ -28,4 +28,9 @@ class Account extends Model
     {
         return $this->hasMany(Grupos::class);
     }
+
+    public function devices()
+    {
+        return $this->hasMany(Device::class);
+    }
 }

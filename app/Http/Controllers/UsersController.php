@@ -9,6 +9,7 @@ use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Models\Roles;
+use App\Models\Organization;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
@@ -27,13 +28,15 @@ class UsersController extends Controller
                     ->paginate()
                     ->appends(Request::all())
             ),
-            'roles' => Roles::get()
+            'roles' => Roles::get(),
         ]);
     }
 
     public function create()
     {
-        return Inertia::render('Users/Create');
+        return Inertia::render('Users/Create', [
+            'organizations' => Organization::select('name', 'id')->orderBy('name')->get()
+        ]);
     }
 
     public function store(UserStoreRequest $request)
@@ -49,6 +52,7 @@ class UsersController extends Controller
     {
         return Inertia::render('Users/Edit', [
             'user' => new UserResource($user),
+            'organizations' => Organization::select('name', 'id')->orderBy('name')->get()
         ]);
     }
 
@@ -58,7 +62,7 @@ class UsersController extends Controller
             $request->validated()
         );
 
-        return Redirect::back()->with('success', 'User updated.');
+        return Redirect::back()->with('success', 'Usuario actualizado.');
     }
 
     public function destroy(User $user, UserDeleteRequest $request)

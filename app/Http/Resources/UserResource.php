@@ -21,9 +21,10 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'owner' => $this->owner,
-            'photo' => $this->photo,
+            'photo' => $this->photo_path,
             'deleted_at' => $this->deleted_at,
-            'account' => $this->whenLoaded('account')
+            'account' => $this->whenLoaded('account'),
+            'organization' => $this->organization
         ];
     }
 }

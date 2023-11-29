@@ -1,6 +1,5 @@
 import React from 'react';
-import { Inertia } from '@inertiajs/inertia';
-import { InertiaLink, useForm } from '@inertiajs/inertia-react';
+import { InertiaLink, useForm, usePage } from '@inertiajs/inertia-react';
 import Layout from '@/Shared/LayoutManagement';
 import LoadingButton from '@/Shared/LoadingButton';
 import TextInput from '@/Shared/TextInput';
@@ -8,13 +7,16 @@ import SelectInput from '@/Shared/SelectInput';
 import FileInput from '@/Shared/FileInput';
 
 const Create = () => {
+  const { organizations } = usePage().props;
+
   const { data, setData, errors, post, processing } = useForm({
     first_name: '',
     last_name: '',
     email: '',
     password: '',
     owner: '0',
-    photo: ''
+    photo: '',
+    organization: 0
   });
 
   function handleSubmit(e) {
@@ -23,7 +25,7 @@ const Create = () => {
   }
 
   return (
-    <>  
+    <>
       <div>
         <div className="container-fluid py-4">
           <div className="card">
@@ -67,7 +69,7 @@ const Create = () => {
                   </div>
                   <div className="col-md-6">
                     <div className="form-group">
-                     <TextInput
+                      <TextInput
                         className="w-full lg:w-1/2"
                         label="Correo eléctronico"
                         name="email"
@@ -101,29 +103,28 @@ const Create = () => {
                         value={data.owner}
                         onChange={e => setData('owner', e.target.value)}
                       >
-                        <option>Seleccionar rol</option>
-                        <option value="1">Si</option>
-                        <option value="0">No</option>
+                        <option value="2">Administrador Dispositivos</option>
                       </SelectInput>
                     </div>
                   </div>
-                  <div className="col-md-6">
-                    <div className="form-group">
-                      <SelectInput
-                        className="w-full  lg:w-1/2"
-                        label="Grupo"
-                        name="owner"
-                        errors={errors.owner}
-                        value={data.owner}
-                        onChange={e => setData('owner', e.target.value)}
-                      >
-                        <option>Seleccionar Grupo</option>
-                        <option value="1">Grupo 1</option>
-                        <option value="0">Grupo 2</option>
-                        <option value="0">Grupo 3</option>
-                        <option value="0">Grupo 4</option>
-                      </SelectInput>
-                    </div>
+                  <div className="col-md-6 col-sm-12">
+                    <SelectInput
+                      className="pb-4 pr-3"
+                      label="Empresa"
+                      name="organization"
+                      errors={errors.organization}
+                      value={data.organization}
+                      onChange={e => setData('organization', e.target.value)}
+                    >
+                      <option>seleccionar empresa</option>
+                      {organizations.map((organization, index) => {
+                        return (
+                          <option key={index} value={organization.id}>
+                            {organization.name}
+                          </option>
+                        );
+                      })}
+                    </SelectInput>
                   </div>
                   <div className="col-md-6">
                     <div className="form-group">

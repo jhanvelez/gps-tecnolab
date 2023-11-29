@@ -31,6 +31,7 @@ class UserStoreRequest extends FormRequest
             'password' => ['nullable'],
             'owner' => ['required', 'boolean'],
             'photo' => ['nullable', 'image'],
+            'organization' => ['required', 'max:50'],
         ];
     }
 

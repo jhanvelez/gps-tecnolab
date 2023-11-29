@@ -10,7 +10,7 @@ const Create = () => {
   const { organizations } = usePage().props;
 
   const { data, setData, errors, post, processing } = useForm({
-    titulo: '',
+    nombre: '',
     organization: 0
   });
 
@@ -42,11 +42,12 @@ const Create = () => {
                     <div className="form-group">
                       <TextInput
                         className="w-full lg:w-1/2"
-                        label="Titulo"
-                        name="titulo"
-                        errors={errors.titulo}
-                        value={data.titulo}
-                        onChange={e => setData('titulo', e.target.value)}
+                        label="Nombre"
+                        name="nombre"
+                        type="text"
+                        errors={errors.nombre}
+                        value={data.nombre}
+                        onChange={e => setData('nombre', e.target.value)}
                       />
                     </div>
                   </div>
@@ -62,7 +63,11 @@ const Create = () => {
                     >
                       <option>seleccionar empresa</option>
                       {organizations.map((organization, index) => {
-                        return (<option key={index} value={organization.id}>{organization.name}</option>)
+                        return (
+                          <option key={index} value={organization.id}>
+                            {organization.name}
+                          </option>
+                        );
                       })}
                     </SelectInput>
                   </div>

@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use League\Glide\Server;
+//use League\Glide\Server;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Auth\Authenticatable;
@@ -54,7 +54,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function photoUrl(array $attributes)
     {
         if ($this->photo_path) {
-            return URL::to(App::make(Server::class)->fromPath($this->photo_path, $attributes));
+            //return URL::to(App::make(Server::class)->fromPath($this->photo_path, $attributes));
         }
     }
 

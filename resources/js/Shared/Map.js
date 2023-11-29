@@ -34,7 +34,7 @@ import Test from '@/Shared/test';
 import TextInput from '@/Shared/TextInput';
 
 export default () => {
-  const { devices, geocercas } = usePage().props;
+  const { devices, geocercas, groups } = usePage().props;
 
   const styleMap = { width: '100%', height: '85vh' };
 
@@ -330,21 +330,24 @@ export default () => {
               />
             </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Grupo</Form.Label>
-              <Form.Select
-                errors={errors.id_grupo}
-                value={data.id_grupo}
-                onChange={e => setData('id_grupo', e.target.value)}
+            <Form.Group
+                className="mb-3"
+                onChange={e => setData('grupo', e.target.value)}
               >
-                <option value="">Seleccinar grupo</option>
-                <option value="1">Grupo 1</option>
-                <option value="2">Grupo 2</option>
-                <option value="3">Grupo 3</option>
-                <option value="4">Grupo 4</option>
-                <option value="5">Grupo 5</option>
-              </Form.Select>
-            </Form.Group>
+                <Form.Label htmlFor="disabledSelect">Grupo</Form.Label>
+                <Form.Select id="disabledSelect">
+                  <option value="0">Seleccionar</option>
+
+                  {groups.data.map(({ id, nombre }, index) => {
+                    return (
+                      <option key={index} value={id}>
+                        {nombre}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+              </Form.Group>
+
             <Modal.Footer>
               <Button variant="secondary" onClick={handleClose}>
                 Cancelar

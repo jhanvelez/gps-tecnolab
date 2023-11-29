@@ -10,14 +10,15 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
+import Accordion from 'react-bootstrap/Accordion';
 
 import { setHistory } from '@/app/states/history';
 import { setSpeed } from '@/app/states/speed';
 
-export default ({ ejecutarFuncionHermanoA }) => {
+export default ({}) => {
   const dispatch = useDispatch();
 
-  const { devices, events } = usePage().props;
+  const { devices, events, drivers, groups } = usePage().props;
 
   const styleObj = {
     fontSize: 13,
@@ -26,10 +27,6 @@ export default ({ ejecutarFuncionHermanoA }) => {
 
   const styleItem = {
     padding: 10
-  };
-
-  const contentList = {
-    overflow: 'scroll'
   };
 
   const styleList = {
@@ -68,7 +65,9 @@ export default ({ ejecutarFuncionHermanoA }) => {
     placa: '',
     imei: '',
     telefono: 0,
-    conductor: 0
+    conductor: 0,
+    grupo: 0,
+    status: true,
   });
 
   const {
@@ -90,8 +89,6 @@ export default ({ ejecutarFuncionHermanoA }) => {
 
   const [historial, setHistorial] = useState([]);
 
-  const [positionsF, setPositions] = useState([]);
-
   let positions = [];
   async function searchInfo(e) {
     e.preventDefault();
@@ -110,11 +107,9 @@ export default ({ ejecutarFuncionHermanoA }) => {
 
       let speeds = [];
       data.history.forEach(position => {
-        speeds.push({ speed: position.speed, date: position.updated_at})
+        speeds.push({ speed: position.speed, date: position.updated_at });
         positions.push([position.track_lat, position.track_lng]);
       });
-
-      setPositions(positions);
 
       dispatch(setHistory(positions));
       dispatch(setSpeed(speeds));
@@ -189,10 +184,32 @@ export default ({ ejecutarFuncionHermanoA }) => {
                 <Form.Label htmlFor="disabledSelect">Condutor</Form.Label>
                 <Form.Select id="disabledSelect">
                   <option value="0">Seleccionar</option>
-                  <option value="1">Jhan</option>
-                  <option value="2">Julian</option>
-                  <option value="3">Stiven</option>
-                  <option value="4">Felipe</option>
+
+                  {drivers.data.map(({ id, nombres, apellidos }, index) => {
+                    return (
+                      <option key={index} value={id}>
+                        {nombres} {apellidos}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+              </Form.Group>
+
+              <Form.Group
+                className="mb-3"
+                onChange={e => setData('grupo', e.target.value)}
+              >
+                <Form.Label htmlFor="disabledSelect">Grupo</Form.Label>
+                <Form.Select id="disabledSelect">
+                  <option value="0">Seleccionar</option>
+
+                  {groups.data.map(({ id, nombre }, index) => {
+                    return (
+                      <option key={index} value={id}>
+                        {nombre}
+                      </option>
+                    );
+                  })}
                 </Form.Select>
               </Form.Group>
 
@@ -208,52 +225,72 @@ export default ({ ejecutarFuncionHermanoA }) => {
           </Modal.Body>
         </Modal>
 
-        <ul className="list-group">
-          {devices.map(({ id, placa, fecha, hora, status, connect }) => {
+        <Accordion defaultActiveKey={0} flush>
+          {groups.data.map(({ id, nombre }, index) => {
             return (
-              <li
-                key={id}
-                className="list-group-item border-0 d-flex justify-content-between mb-2 border-radius-lg"
-                style={itemStyle}
-              >
-                <div className="d-flex align-items-center">
-                  {connect && (
-                    <button className="btn btn-icon-only btn-outline-success mb-0 me-3 d-flex align-items-center justify-content-center">
-                      <i
-                        style={{ fontSize: '20px' }}
-                        className="fas fa-solid fa-wifi"
-                      ></i>
-                    </button>
-                  )}
+              <Accordion.Item key={index} eventKey={index}>
+                <Accordion.Header>
+                  <strong>{nombre}</strong>
+                </Accordion.Header>
+                <Accordion.Body>
+                  <ul className="list-group">
+                    {devices.map(
+                      (
+                        { placa, fecha, hora, status, connect, grupo },
+                        index
+                      ) => {
+                        return id == grupo && (
+                          <li
+                            key={index}
+                            className="list-group-item border-0 d-flex justify-content-between mb-2 border-radius-lg"
+                            style={itemStyle}
+                          >
+                            <div className="d-flex align-items-center">
+                              {connect && (
+                                <button className="btn btn-icon-only btn-outline-success mb-0 me-3 d-flex align-items-center justify-content-center">
+                                  <i
+                                    style={{ fontSize: '20px' }}
+                                    className="fas fa-solid fa-wifi"
+                                  ></i>
+                                </button>
+                              )}
 
-                  {!connect && (
-                    <button
-                      style={{ fontSize: '15px' }}
-                      className="btn btn-icon-only btn-outline-danger mb-0 me-3 d-flex align-items-center justify-content-center"
-                    >
-                      OFF {connect}
-                    </button>
-                  )}
+                              {!connect && (
+                                <button
+                                  style={{ fontSize: '15px' }}
+                                  className="btn btn-icon-only btn-outline-danger mb-0 me-3 d-flex align-items-center justify-content-center"
+                                >
+                                  OFF {connect}
+                                </button>
+                              )}
 
-                  <div className="d-flex flex-column">
-                    <h6 className="mb-1 text-dark text-sm">{placa}</h6>
-                    <span className="text-xs">
-                      {fecha}, {hora}
-                    </span>
-                  </div>
-                </div>
-                <div className="align-middle">
-                  <button
-                    className="btn btn-link text-secondary mb-0"
-                    style={styleItem}
-                  >
-                    <i className="fa fa-ellipsis-v text-xs"></i>
-                  </button>
-                </div>
-              </li>
+                              <div className="d-flex flex-column">
+                                <h6 className="mb-1 text-dark text-sm">
+                                  {placa}
+                                </h6>
+                                <span className="text-xs">
+                                  {fecha}, {hora}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="align-middle">
+                              <button
+                                className="btn btn-link text-secondary mb-0"
+                                style={styleItem}
+                              >
+                                <i className="fa fa-ellipsis-v text-xs"></i>
+                              </button>
+                            </div>
+                          </li>
+                        )
+                      }
+                    )}
+                  </ul>
+                </Accordion.Body>
+              </Accordion.Item>
             );
           })}
-        </ul>
+        </Accordion>
       </TabPanel>
 
       {/* Eventos */}

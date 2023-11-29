@@ -12,70 +12,78 @@ const Index = () => {
     meta: { links }
   } = groups;
 
-  const tableStyle = {
-    fontSize: '12px'
-  };
+  console.log( groups );
 
   return (
-    <>
-      <div>
-        <div className="row">
-          <div className="col-12">
-            <div className="card mb-4 mx-4">
-              <div className="card-header pb-0">
-                <div className="d-flex flex-row justify-content-between">
-                  <div>
-                    <h5 className="mb-0">Grupos</h5>
-                  </div>
+    <div>
+      <div className="row">
+        <div className="col-12">
+          <div className="card mb-4 mx-4">
+            <div className="card-header pb-0">
+              <SearchFilter />
 
-                  <InertiaLink
-                    className="btn bg-gradient-primary btn-sm mb-0"
-                    href={route('groups.create')}
-                  >
-                    <span>Crear</span>
-                    <span className="hidden md:inline"> Grupo</span>
-                  </InertiaLink>
+              <div className="d-flex flex-row justify-content-between">
+                <div>
+                  <h5 className="mb-0">Grupos</h5>
                 </div>
+
+                <InertiaLink
+                  className="btn bg-gradient-primary btn-sm mb-0"
+                  href={route('groups.create')}
+                >
+                  <span>Nuevo</span>
+                  <span className="hidden md:inline"> grupo</span>
+                </InertiaLink>
               </div>
-
-              <div className="card-body px-0 pt-0 pb-2">
-                <SearchFilter />
-
-                <div className="table-responsive p-0">
-                  <table
-                    className="table align-items-center mb-0"
-                    style={tableStyle}
-                  >
-                    <thead>
-                      <tr>
-                        <th
-                          className="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
-                          colSpan="2"
-                        >
-                          Titulo
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.map(({ id, nombre }) => {
-                        return (
-                        <tr
-                          key={id}
-                          className="hover:bg-gray-100 focus-within:bg-gray-100"
-                        >
-                          <td className="border-t">
-                            <InertiaLink
-                              tabIndex="-1"
-                              href={route('groups.edit', id)}
-                              className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
-                            >
-                              {nombre}
-                            </InertiaLink>
+            </div>
+            <div className="card-body px-0 pt-0 pb-2">
+              <div className="table-responsive p-0">
+                <table className="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th className="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                        #
+                      </th>
+                      <th className="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                        Nombre
+                      </th>
+                      <th className="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                        Empresa
+                      </th>
+                      <th className="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                        Acción
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.map((group, index) => {
+                      return (
+                        <tr key={group.id}>
+                          <td className="ps-4">
+                            <p className="text-xs font-weight-bold mb-0">
+                              {index + 1}
+                            </p>
                           </td>
-                          <td className="w-px border-t">
+                          <td className="text-center">
+                            <p className="text-xs font-weight-bold mb-0">
+                              {group.nombre}
+                              {group.deleted_at && (
+                                <Icon
+                                  name="trash"
+                                  className="flex-shrink-0 w-3 h-3 ml-2 text-gray-400 fill-current"
+                                />
+                              )}
+                            </p>
+                          </td>
+                          <td className="text-center">
+                            <p className="text-xs font-weight-bold mb-0">
+                              {group.organization}
+                            </p>
+                          </td>
+                          <td className="text-center">
                             <InertiaLink
                               tabIndex="-1"
-                              href={route('groups.edit', id)}
+                              href={route('groups.edit', group.id)}
                               className="flex items-center px-4 focus:outline-none"
                             >
                               <Icon
@@ -85,25 +93,24 @@ const Index = () => {
                             </InertiaLink>
                           </td>
                         </tr>
-                        );
-                      })}
-                      {data.length === 0 && (
-                        <tr>
-                          <td className="px-6 py-4 border-t" colSpan="4">
-                            No contacts found.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-                <Pagination links={links} />
+                      );
+                    })}
+                    {data.length === 0 && (
+                      <tr>
+                        <td className="px-6 py-4 border-t" colSpan="4">
+                          No se han encontrado grupos.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
+              <Pagination links={links} />
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

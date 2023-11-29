@@ -11,8 +11,8 @@ import { InertiaLink } from '@inertiajs/inertia-react';
 
 export default () => {
   const { data, setData, errors, post, processing } = useForm({
-    email: 'johndoe@example.com',
-    password: 'secret',
+    email: '',
+    password: '',
     remember: true
   });
 
@@ -148,12 +148,6 @@ export default () => {
                     </a>
                     <a href="https://www.creative-tim.com/templates" target="_blank" className="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
                       Productos
-                    </a>
-                    <a href="https://www.creative-tim.com/blog" target="_blank" className="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
-                      Demo
-                    </a>
-                    <a href="https://www.creative-tim.com/support-terms" target="_blank" className="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
-                      Precios
                     </a>
                 </div>
                 <div className="col-lg-8 mx-auto text-center mb-4 mt-2">

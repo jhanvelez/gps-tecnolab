@@ -3,12 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Grupos extends Model
 {
     use SoftDeletes, HasFactory;
+
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class);
+    }
 
     public function contacts()
     {

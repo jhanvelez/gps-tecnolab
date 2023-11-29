@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserDeleteRequest;
-use App\Http\Requests\UserStoreRequest;
+use App\Http\Requests\GrupoStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\GroupsCollection;
 use App\Http\Resources\GroupsResource;
@@ -22,6 +22,7 @@ class GroupsController extends Controller
             'filters' => Request::all('search', 'trashed'),
             'groups' =>new GroupsCollection(
                 Auth::user()->account->groups()
+                    ->with('organization')
                     ->orderBy('id')
                     ->filter(Request::only('search', 'trashed'))
                     ->paginate()
@@ -37,7 +38,7 @@ class GroupsController extends Controller
         ]);
     }
 
-    public function store(UserStoreRequest $request)
+    public function store(GrupoStoreRequest $request)
     {
         Auth::user()->account->groups()->create(
             $request->validated()
@@ -59,20 +60,20 @@ class GroupsController extends Controller
             $request->validated()
         );
 
-        return Redirect::back()->with('success', 'User updated.');
+        return Redirect::back()->with('success', 'Grupo actualizado.');
     }
 
     public function destroy(Grupos $user, UserDeleteRequest $request)
     {
         $user->delete();
 
-        return Redirect::back()->with('success', 'User deleted.');
+        return Redirect::back()->with('success', 'Grupo eliminado.');
     }
 
     public function restore(Grupos $user)
     {
         $user->restore();
 
-        return Redirect::back()->with('success', 'User restored.');
+        return Redirect::back()->with('success', 'Grupo restaurado.');
     }
 }

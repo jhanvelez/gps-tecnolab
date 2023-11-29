@@ -54,13 +54,14 @@ Route::group(['prefix' => 'groups'], function() {
  * Roles Routes
  */
 Route::group(['prefix' => 'roles'], function() {
-    Route::get('')->name('roles')->uses('UsersController@index')->middleware('remember', 'auth');
-    Route::get('create')->name('roles.create')->uses('UsersController@create')->middleware('auth');
-    Route::post('')->name('roles.store')->uses('UsersController@store')->middleware('auth');
-    Route::get('{rol}/edit')->name('roles.edit')->uses('UsersController@edit')->middleware('auth');
-    Route::put('{rol}')->name('roles.update')->uses('UsersController@update')->middleware('auth');
-    Route::delete('{rol}')->name('roles.destroy')->uses('UsersController@destroy')->middleware('auth');
-    Route::put('{rol}/restore')->name('roles.restore')->uses('UsersController@restore')->middleware('auth');
+    Route::get('')->name('roles')->uses('RolesController@index')->middleware('remember', 'auth');
+    Route::get('create')->name('roles.create')->uses('RolesController@create')->middleware('auth');
+    Route::post('')->name('roles.store')->uses('RolesController@store')->middleware('auth');
+    Route::get('{rol}/edit')->name('roles.edit')->uses('RolesController@edit')->middleware('auth');
+    Route::put('{rol}')->name('roles.update')->uses('RolesController@update')->middleware('auth');
+    Route::get('{rol}/permissions')->name('roles.permissions')->uses('RolesController@permissions')->middleware('auth');
+    Route::delete('{rol}')->name('roles.destroy')->uses('RolesController@destroy')->middleware('auth');
+    Route::put('{rol}/restore')->name('roles.restore')->uses('RolesController@restore')->middleware('auth');
 });
 
 

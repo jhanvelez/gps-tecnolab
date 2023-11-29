@@ -15,7 +15,7 @@ class GroupsCollection extends ResourceCollection
     public function toArray($request)
     {
         return $this->collection->map->only(
-            'id', 'nombre'
+            'id', 'nombre', 'organization'
         );
     }
 }

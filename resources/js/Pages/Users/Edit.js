@@ -12,6 +12,8 @@ import TrashedMessage from '@/Shared/TrashedMessage';
 import Form from 'react-bootstrap/Form';
 
 const Edit = () => {
+  const { organizations } = usePage().props;
+
   const { user } = usePage().props;
   const { data, setData, errors, post, processing } = useForm({
     first_name: user.first_name || '',
@@ -19,7 +21,8 @@ const Edit = () => {
     email: user.email || '',
     password: user.password || '',
     owner: user.owner ? '1' : '0' || '0',
-    photo: '',
+    photo: user.photo || '',
+    organization: user.organization || 0,
 
     // NOTE: When working with Laravel PUT/PATCH requests and FormData
     // you SHOULD send POST request and fake the PUT request like this.
@@ -207,6 +210,25 @@ const Edit = () => {
                       </SelectInput>
                     </div>
                   </div>
+                  <div className="col-md-6 col-sm-12">
+                    <SelectInput
+                      className="pb-4 pr-3"
+                      label="Empresa"
+                      name="organization"
+                      errors={errors.organization}
+                      value={data.organization}
+                      onChange={e => setData('organization', e.target.value)}
+                    >
+                      <option>seleccionar empresa</option>
+                      {organizations.map((organization, index) => {
+                        return (
+                          <option key={index} value={organization.id}>
+                            {organization.name}
+                          </option>
+                        );
+                      })}
+                    </SelectInput>
+                  </div>
                   <div className="col-md-6">
                     <div className="form-group">
                       <FileInput
@@ -221,7 +243,7 @@ const Edit = () => {
                     </div>
                   </div>
 
-                  <div className="col-md-6 d-flex justify-content-start">
+                  <div className="col-md-12 d-flex justify-content-end">
                     {!user.deleted_at && (
                       <DeleteButton onDelete={destroy}>
                         Eliminar Usuario
@@ -232,8 +254,8 @@ const Edit = () => {
                         Este usuario ha sido eliminado.
                       </TrashedMessage>
                     )}
-                  </div>
-                  <div className="col-md-6 d-flex justify-content-end">
+
+
                     <LoadingButton
                       loading={processing}
                       type="submit"
@@ -242,7 +264,11 @@ const Edit = () => {
                       Actualizar Usuario
                     </LoadingButton>
                   </div>
-                </div>
+
+
+                  </div>
+
+                
               </form>
             </div>
           </div>

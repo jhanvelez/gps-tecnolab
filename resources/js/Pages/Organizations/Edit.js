@@ -146,8 +146,7 @@ const Edit = () => {
                         onChange={e => setData('country', e.target.value)}
                       >
                         <option value=""></option>
-                        <option value="CA">Canada</option>
-                        <option value="US">United States</option>
+                        <option value="CO">Colombia</option>
                       </SelectInput>
                     </div>
 
