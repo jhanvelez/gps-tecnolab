@@ -17,7 +17,9 @@ class CreateDevicesTable extends Migration
             $table->id();
             $table->string('placa', 15);
             $table->string('imei', 100);
+            $table->bigInteger('grupo');
             $table->integer('conductor');
+            $table->integer('account_id');
             $table->boolean('status');
             $table->timestamps();
         });

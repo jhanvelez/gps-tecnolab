@@ -15,7 +15,6 @@ class AddForeingKeyToDriversTable extends Migration
     {
         Schema::table('drivers', function (Blueprint $table) {
             $table->integer('organization')->unsigned()->change();
-
             $table->foreign('organization')->references('id')->on('organizations');
         });
     }

@@ -21,12 +21,19 @@ class DriversController extends Controller
             'filters' => Request::all('search', 'trashed'),
             'drivers' => new DriverCollection(
                 Auth::user()->account->drivers()
+                    ->when(Auth::user(), function ($query) {
+                        $query->whereHas('organization', function ($query) {
+                            $query->where('id', Auth::user()->organization);
+                        });
+                    })
                     ->orderBy('nombres')
                     ->filter(Request::only('search', 'trashed'))
                     ->paginate()
                     ->appends(Request::all())
             ),
+            'user' => Auth::user(),
         ]);
+
     }
 
     public function create()

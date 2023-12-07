@@ -9,6 +9,11 @@ class Driver extends Model
 {
     use SoftDeletes, HasFactory;
 
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class, 'organization');
+    }
+
     public function contacts()
     {
         return $this->hasMany(Contact::class);
