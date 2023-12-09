@@ -23,6 +23,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'owner' => 'boolean',
     ];
 
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class, 'organization');
+    }
+
     public function account()
     {
         return $this->belongsTo(Account::class);

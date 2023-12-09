@@ -21,6 +21,10 @@ class CreateDevicesTable extends Migration
             $table->integer('conductor');
             $table->integer('account_id');
             $table->boolean('status');
+
+            $table->integer('organization')->unsigned();
+            $table->foreign('organization')->references('id')->on('organizations')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

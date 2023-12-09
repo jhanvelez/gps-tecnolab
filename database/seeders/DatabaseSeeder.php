@@ -26,15 +26,8 @@ class DatabaseSeeder extends Seeder
             'account_id' => $account->id
         ]);
 
-        $organizations = Organization::factory()->count(100)->create([
-            'account_id' => $account->id
+        $this->call([
+            PermissionSeeder::class
         ]);
-
-        Contact::factory()->count(100)->create([
-            'account_id' => $account->id
-        ])
-            ->each(function (Contact  $contact) use ($organizations) {
-                $contact->update(['organization_id' => $organizations->random()->id]);
-            });
     }
 }

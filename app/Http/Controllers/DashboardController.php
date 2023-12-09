@@ -41,7 +41,13 @@ class DashboardController extends Controller
             ->whereColumn('imei', 'devices.imei')
             ->orderByDesc('id')
             ->limit(1)
-        ])->get();
+        ])
+        ->when(Auth::user(), function ($query) {
+            $query->whereHas('organization', function ($query) {
+                $query->where('id', Auth::user()->organization);
+            });
+        })
+        ->get();
 
 
         $devices = $devices->map(function ($device) {

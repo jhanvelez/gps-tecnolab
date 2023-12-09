@@ -18,7 +18,10 @@ class DevicesController extends Controller
     public function store(DevicesStoreRequest $request)
     {
         Auth::user()->account->devices()->create(
-            $request->validated()
+            array_merge(
+                $request->validated(),
+                ['organization' => Auth::user()->organization]
+            )
         );
 
         return Redirect::route('dashboard')->with('success', 'Equipo registrado.');

@@ -60,6 +60,8 @@ Route::group(['prefix' => 'roles'], function() {
     Route::get('{rol}/edit')->name('roles.edit')->uses('RolesController@edit')->middleware('auth');
     Route::put('{rol}')->name('roles.update')->uses('RolesController@update')->middleware('auth');
     Route::get('{rol}/permissions')->name('roles.permissions')->uses('RolesController@permissions')->middleware('auth');
+    Route::put('{rol}{permission}/asigned')->name('roles.permission.asigned')->uses('RolesController@assignPermission')->middleware('auth');
+    Route::put('{rol}{permission}/remove')->name('roles.permission.remove')->uses('RolesController@removePermission')->middleware('auth');
     Route::delete('{rol}')->name('roles.destroy')->uses('RolesController@destroy')->middleware('auth');
     Route::put('{rol}/restore')->name('roles.restore')->uses('RolesController@restore')->middleware('auth');
 });

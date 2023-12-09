@@ -67,10 +67,41 @@ class RolesController extends Controller
 
     public function permissions($rol)
     {
+        $allPermissions = Permission::all();
+        $rolePermissions = Role::find($rol)->permissions->pluck('id')->toArray();
+
+        $permissions = $allPermissions->map(function ($permission) use ($rolePermissions) {
+            $permission['assigned'] = in_array($permission->id, $rolePermissions);
+            return $permission;
+        });
+
         return Inertia::render('Roles/Permissions', [
             'rol' =>  Role::find($rol),
+            'permissions' => $permissions,
         ]);
     }
+
+    public function assignPermission($roleId, $permissionId)
+    {
+        $role = Role::findById($roleId);
+        $permission = Permission::findById($permissionId);
+    
+        $role->givePermissionTo($permission);
+    
+        return Redirect::back()->with('success', 'Permiso asignado con éxito.');
+    }
+
+    public function removePermission($roleId, $permissionId)
+    {
+        $role = Role::findById($roleId);
+        $permission = Permission::findById($permissionId);
+
+        $role->revokePermissionTo($permission);
+
+        return response()->json(['message' => 'Permiso eliminado con éxito del rol.']);
+        return Redirect::back()->with('success', 'Permiso eliminado con éxito.');
+    }
+
 
     public function destroy(Organization $organization)
     {

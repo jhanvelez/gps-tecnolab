@@ -9,6 +9,11 @@ class Device extends Model
 {
     use SoftDeletes, HasFactory;
 
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class, 'organization');
+    }
+
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {

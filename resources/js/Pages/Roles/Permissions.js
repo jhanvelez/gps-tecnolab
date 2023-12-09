@@ -11,7 +11,7 @@ import TrashedMessage from '@/Shared/TrashedMessage';
 import Icon from '@/Shared/Icon';
 
 const Edit = () => {
-  const { rol } = usePage().props;
+  const { rol, permissions } = usePage().props;
   const { data, setData, errors, put, processing } = useForm({
     name: rol.name || ''
   });
@@ -33,6 +33,10 @@ const Edit = () => {
     }
   }
 
+  const assignedPermissions = (e, permission) => {
+    console.log(e, permission);
+  }
+
   return (
     <div className="row">
       <div className="col-12">
@@ -50,41 +54,42 @@ const Edit = () => {
                 <span className="mx-2 font-medium text-indigo-600">/</span>
                 {data.name} / Permisos
               </h5>
-              {rol.deleted_at && (
-                <TrashedMessage onRestore={restore}>
-                  Este ha sido suprimida.
-                </TrashedMessage>
-              )}
-              <div className="max-w-3xl overflow-hidden">
-                <form onSubmit={handleSubmit}>
-                  <div className="flex flex-wrap p-4 -mb-4 -mr-3 row">
-                    <div className="col-md-6 col-sm-12">
-                      <TextInput
-                        className="pb-4 pr-3"
-                        label="Nombre"
-                        name="name"
-                        errors={errors.name}
-                        value={data.name}
-                        onChange={e => setData('name', e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="px-4 py-2 d-flex justify-content-end">
-                    {!rol.deleted_at && (
-                      <DeleteButton onDelete={destroy}>
-                        Eliminar rol
-                      </DeleteButton>
-                    )}
-                    <LoadingButton
-                      loading={processing}
-                      type="submit"
-                      className="ml-auto btn-indigo"
-                    >
-                      Actualizar rol
-                    </LoadingButton>
-                  </div>
-                </form>
-              </div>
+              <table className="w-full whitespace-nowrap">
+                <thead>
+                  <tr className="font-bold text-left">
+                    <th className="px-6 pt-5 pb-4">Permiso</th>
+                    <th className="px-6 pt-5 pb-4">Asignar/Remover</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {permissions.map(({ id, assigned, description, deleted_at }) => {
+                    return (
+                      <tr
+                        key={id}
+                        className="hover:bg-gray-100 focus-within:bg-gray-100"
+                      >
+                        <td className="border-t">
+                            {description}
+                            {deleted_at && (
+                              <Icon
+                                name="trash"
+                                className="flex-shrink-0 w-3 h-3 ml-2 text-gray-400 fill-current"
+                              />
+                            )}
+                        </td>
+                        <td className="border-t">
+                          <input
+                            type='checkbox'
+                            className='form-checkbox h-5 w-5 text-gray-600'
+                            checked={assigned}
+                            onChange={e => assignedPermissions(assigned, id)}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

@@ -11,7 +11,7 @@ class Grupos extends Model
 
     public function organization()
     {
-        return $this->belongsTo(Organization::class);
+        return $this->belongsTo(Organization::class, 'organization');
     }
 
     public function contacts()

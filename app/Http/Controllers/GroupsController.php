@@ -22,6 +22,11 @@ class GroupsController extends Controller
             'filters' => Request::all('search', 'trashed'),
             'groups' =>new GroupsCollection(
                 Auth::user()->account->groups()
+                    ->when(Auth::user(), function ($query) {
+                        $query->whereHas('organization', function ($query) {
+                            $query->where('id', Auth::user()->organization);
+                        });
+                    })
                     ->with('organization')
                     ->orderBy('id')
                     ->filter(Request::only('search', 'trashed'))

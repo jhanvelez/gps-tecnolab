@@ -23,6 +23,11 @@ class UsersController extends Controller
             'filters' => Request::all('search', 'role', 'trashed'),
             'users' => new UserCollection(
                 Auth::user()->account->users()
+                    ->when(Auth::user(), function ($query) {
+                        $query->whereHas('organization', function ($query) {
+                            $query->where('id', Auth::user()->organization);
+                        });
+                    })
                     ->orderByName()
                     ->filter(Request::only('search', 'role', 'trashed'))
                     ->paginate()
