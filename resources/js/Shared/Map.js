@@ -1,6 +1,7 @@
-import React, { useState, Fragment, useEffect, useCallback } from 'react';
+import React, { useState, Fragment, useEffect, useCallback, useRef } from 'react';
 import { useForm, usePage } from '@inertiajs/inertia-react';
 import { useSelector } from 'react-redux';
+import axios from 'axios';
 
 //Leaflet libray
 import L from 'leaflet';
@@ -34,7 +35,45 @@ import Test from '@/Shared/test';
 import TextInput from '@/Shared/TextInput';
 
 export default () => {
-  const { devices, geocercas, groups } = usePage().props;
+  const mapRef = useRef();
+
+  const { devices: initialDevices, geocercas, groups } = usePage().props;
+  const [devices, setDevices] = useState(initialDevices);
+  
+  useEffect(() => {
+    // Configura un intervalo para realizar la actualización cada 10 segundos
+    const intervalId = setInterval(() => {
+      axios.get('/info')
+        .then(function (response) {
+          // Maneja la respuesta exitosa
+          setDevices(response.data.devices); // Actualiza el estado de `devices`
+        })
+        .catch(function (error) {
+          // Maneja el error
+          console.log(error);
+        });
+    }, 10000); // 5000 milisegundos son 5 segundos
+  
+    // Limpia el intervalo cuando el componente se desmonta
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const [address, setAddress] = useState('');
+
+  function getAdress(lat, lng) {
+    axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+      .then(function (response) {
+        // Maneja la respuesta exitosa
+        const address = response.data.display_name;
+
+        setAddress(address)
+      })
+      .catch(function (error) {
+        // Maneja el error
+        console.log(error);
+      });
+  }
+  
 
   const styleMap = { width: '100%', height: '85vh' };
 
@@ -179,8 +218,6 @@ export default () => {
   }
 
   // Actualiza el estado compartido
-
-
   const styleContainerModal = {
     position: 'fixed',
     bottom: '0',
@@ -191,7 +228,6 @@ export default () => {
     zIndex: 2000,
     verticalAlign: 'top'
   };
-
 
   const speeds = useSelector(store => store.speed);
 
@@ -225,6 +261,9 @@ export default () => {
           zoom={6}
           zoomControl={false}
           whenReady={event => setMapContext(event.target)}
+          whenCreated={mapInstance => {
+            mapRef.current = mapInstance;
+          }}
         >
           <TileLayer
             attribution='&copy; <a href="https://tecnolab.com.co/">Tecnolab</a>'
@@ -269,10 +308,19 @@ export default () => {
             );
           })}
 
-          {devices.map(({ id, placa, lng, lat }) => {
+          {devices.map(({ id, placa, lng, lat, fecha, hora, speed }) => {
             return lat > '' ? (
               <Marker key={id} position={[lat, lng]} icon={newicon}>
-                <Popup>{placa}</Popup>
+                <Popup>
+                  <div style={{ fontSize: '0.5em' }}>
+                    <p>{placa}</p>
+                    <hr />
+                    <p><strong>Última conexión:</strong> {fecha}, {hora}</p>
+                    <p><strong>Velocidad:</strong> {speed} km/h</p>
+                    <p><strong>Dirección:</strong> { getAdress(lat, lng) } { address }</p>
+                    <p><strong>Coordenadas:</strong> <a href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`} target="_blank" rel="noopener noreferrer">{lat}, {lng}</a></p>
+                  </div>
+                </Popup>
               </Marker>
             ) : (
               ''

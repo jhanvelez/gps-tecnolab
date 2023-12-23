@@ -4,12 +4,10 @@ import { InertiaApp } from '@inertiajs/inertia-react';
 import { InertiaProgress } from '@inertiajs/progress';
 import * as Sentry from '@sentry/browser';
 
-import '../scss/app.scss';  // Import all of Bootstrap's JS
+import '../scss/app.scss';
 import '../../public/assets/css/soft-ui-dashboard.css?v=1.0.3';
 import '../../public/assets/css/nucleo-svg.css';
 import '../../public/assets/css/nucleo-icons.css';
-
-import * as bootstrap from 'bootstrap';
 
 import { Provider } from 'react-redux';
 

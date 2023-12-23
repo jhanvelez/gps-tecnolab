@@ -120,6 +120,17 @@ export default ({}) => {
     }
   }
 
+  async function formatDate(created_at) {
+    const date = new Date(created_at);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1; // Los meses en JavaScript empiezan en 0
+    const day = date.getDate();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    return `${hours}:${minutes}, ${year}-${month}-${day}`;
+  }
+
   return (
     <Tabs>
       <TabList>
@@ -236,7 +247,7 @@ export default ({}) => {
                   <ul className="list-group">
                     {devices.map(
                       (
-                        { placa, fecha, hora, status, connect, grupo },
+                        { placa, lng, lat, fecha, hora, connect, grupo },
                         index
                       ) => {
                         return id == grupo && (
@@ -257,6 +268,11 @@ export default ({}) => {
 
                               {!connect && (
                                 <button
+                                  onClick={() => {
+                                    if (mapRef.current) {
+                                      mapRef.current.flyTo([lat, lng], 13);
+                                    }
+                                  }}
                                   style={{ fontSize: '15px' }}
                                   className="btn btn-icon-only btn-outline-danger mb-0 me-3 d-flex align-items-center justify-content-center"
                                 >
@@ -380,7 +396,7 @@ export default ({}) => {
         <div style={styleList}>
           <ul className="list-group card">
             {historial.map(
-              ({ id, track_lat, track_lng, track_date, track_time, speed }) => {
+              ({ id, track_date, track_time }) => {
                 return (
                   <li
                     key={id}

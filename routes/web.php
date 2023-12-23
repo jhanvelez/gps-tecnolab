@@ -20,6 +20,7 @@ Route::get('logout')->name('logout')->uses('Auth\LoginController@logout');
 
 // Dashboard
 Route::get('/')->name('dashboard')->uses('DashboardController')->middleware('auth');
+Route::get('info')->name('info')->uses('DashboardController@info')->middleware('auth');
 
 
 //Dispositivos
