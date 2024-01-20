@@ -13,13 +13,15 @@ import {
   useMapEvents,
   LayersControl,
   ZoomControl,
-  Polygon
+  Polygon,
+  Polyline
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import 'leaflet.motion/dist/leaflet.motion.js';
 import 'react-leaflet-fullscreen/dist/styles.css';
 import { FullscreenControl } from 'react-leaflet-fullscreen';
+import 'leaflet-routing-machine';
 
 //React Boostrap
 import Form from 'react-bootstrap/Form';
@@ -74,7 +76,6 @@ export default () => {
       });
   }
   
-
   const styleMap = { width: '100%', height: '85vh' };
 
   const newicon = new L.Icon({
@@ -172,27 +173,42 @@ export default () => {
   function handleAddMarkerClick() {
     setStartButton(false);
 
-    instance = L.motion.polyline(
-      history,
-      {
-        color: 'red'
-      },
-      {
-        auto: true,
-        duration: 40000
-      },
-      {
-        removeOnEnd: false,
-        showMarker: true,
-        icon: L.icon({
-          iconUrl:
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Circle-icons-car.svg/1200px-Circle-icons-car.svg.png',
-          iconSize: [20, 30]
-        })
-      }
-    );
+    if (history && history.length > 0) {
+      const waypoints = history.map(route => L.latLng(route[0], route[1]));
 
-    mapContext && mapContext.addLayer(instance);
+      console.log("Waypoints: ", waypoints);
+
+      L.Routing.control({
+        waypoints,
+        routeWhileDragging: true,
+        show: false,
+        addWaypoints: false,
+        createMarker: () => null
+      }).addTo(mapContext);
+    }
+
+
+    // instance = L.motion.polyline(
+    //   history,
+    //   {
+    //     color: 'red'
+    //   },
+    //   {
+    //     auto: true,
+    //     duration: 40000
+    //   },
+    //   {
+    //     removeOnEnd: false,
+    //     showMarker: true,
+    //     icon: L.icon({
+    //       iconUrl:
+    //         'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Circle-icons-car.svg/1200px-Circle-icons-car.svg.png',
+    //       iconSize: [20, 30]
+    //     })
+    //   }
+    // );
+
+    // mapContext && mapContext.addLayer(instance);
   }
 
   const [playButton, setPlayButton] = useState(true);
@@ -210,11 +226,6 @@ export default () => {
 
   function stopRoute() {
     instance.motionStop();
-  }
-
-  function miFuncion(parametro) {
-    setPositions(parametro);
-    setModalOpen(true);
   }
 
   // Actualiza el estado compartido
@@ -251,6 +262,30 @@ export default () => {
   const getContainer = useCallback(container => {
     //console.log(container);
   }, []);
+
+  const [deviceRoutes, setDeviceRoutes] = useState([]);
+
+  useEffect(() => {
+    setDeviceRoutes(devices.map(device => device.lastLocations.map(location => [location.lat, location.lng])));
+  }, [devices]);
+
+  function Routing({ deviceRoutes }) {
+    useEffect(() => {
+      if (deviceRoutes && deviceRoutes.length > 0) {
+        const waypoints = deviceRoutes.map(route => L.latLng(route[0], route[1]));
+  
+        L.Routing.control({
+          waypoints,
+          routeWhileDragging: true,
+          show: false,
+          addWaypoints: false,
+          createMarker: () => null 
+        }).addTo(mapContext);
+      }
+    }, [deviceRoutes, mapContext]);
+  
+    return null;
+  }
 
   return (
     <>
@@ -326,6 +361,11 @@ export default () => {
               ''
             );
           })}
+
+          {deviceRoutes.map((routePoints, index) => (
+            // <Polyline key={index} positions={routePoints} />
+            <Routing deviceRoutes={routePoints} />
+          ))}
         </MapContainer>
 
         {history.length > 0 && (

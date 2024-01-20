@@ -53,6 +53,19 @@ class DashboardController extends Controller
 
             $diff_in_minutes = $date->diffInMinutes($now);
 
+            // Obtén las últimas ubicaciones para este dispositivo
+            $lastLocations = Gpstrack::select('track_lng', 'track_lat')
+                ->where('imei', $device->imei)
+                ->orderByDesc('id')
+                ->limit(6)  // Cambia este número al número de ubicaciones que quieras obtener
+                ->get()
+                ->map(function ($location) {
+                    return [
+                        'lng' => $location->track_lng,
+                        'lat' => $location->track_lat,
+                    ];
+                });
+
             return [
                 'id' => $device->id,
                 'placa' => $device->placa,
@@ -64,7 +77,8 @@ class DashboardController extends Controller
                 'lat' => $device->lat,
                 'grupo' => $device->grupo,
                 'speed' => $device->speed,
-                'connect' => ($date->diffInDays($now) > 0 && $diff_in_minutes > 5) ? false : true
+                'connect' => ($date->diffInDays($now) > 0 && $diff_in_minutes > 5) ? false : true,
+                'lastLocations' => $lastLocations,
             ];
         });
         
@@ -123,6 +137,19 @@ class DashboardController extends Controller
 
             $diff_in_minutes = $date->diffInMinutes($now);
 
+            // Obtén las últimas ubicaciones para este dispositivo
+            $lastLocations = Gpstrack::select('track_lng', 'track_lat')
+                ->where('imei', $device->imei)
+                ->orderByDesc('id')
+                ->limit(6)  // Cambia este número al número de ubicaciones que quieras obtener
+                ->get()
+                ->map(function ($location) {
+                    return [
+                        'lng' => $location->track_lng,
+                        'lat' => $location->track_lat,
+                    ];
+                });
+
             return [
                 'id' => $device->id,
                 'placa' => $device->placa,
@@ -134,7 +161,8 @@ class DashboardController extends Controller
                 'lat' => $device->lat,
                 'grupo' => $device->grupo,
                 'speed' => $device->speed,
-                'connect' => ($date->diffInDays($now) > 0 && $diff_in_minutes > 5) ? false : true
+                'connect' => ($date->diffInDays($now) > 0 && $diff_in_minutes > 5) ? false : true,
+                'lastLocations' => $lastLocations,
             ];
         });
 

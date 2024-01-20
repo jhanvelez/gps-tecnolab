@@ -15,6 +15,7 @@ class GpstracksController extends Controller
         $history = Gpstrack::whereBetween('created_at', [$request->route('date_i'), $request->route('date_f')])
                             ->where('imei', $request->route('device'))
                             ->orderBy('id', 'asc')
+                            ->limit(100)
                             ->get();
 
         $history = $history->map(function ($h) {
