@@ -1,6 +1,7 @@
 import React, { useState, Fragment, useEffect, useCallback, useRef } from 'react';
 import { useForm, usePage } from '@inertiajs/inertia-react';
 import { useSelector } from 'react-redux';
+import { GiStopSign, GiUpCard } from "react-icons/gi";
 import axios from 'axios';
 
 //Leaflet libray
@@ -14,7 +15,7 @@ import {
   LayersControl,
   ZoomControl,
   Polygon,
-  Polyline
+  Tooltip,
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
@@ -63,6 +64,7 @@ export default () => {
   const [address, setAddress] = useState('');
 
   function getAdress(lat, lng) {
+    //setAddress('Cargando dirección...')
     axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
       .then(function (response) {
         // Maneja la respuesta exitosa
@@ -75,34 +77,15 @@ export default () => {
         console.log(error);
       });
   }
-  
+
   const styleMap = { width: '100%', height: '85vh' };
 
   const newicon = new L.Icon({
     iconUrl: '../../../images/icon.png',
-    iconAnchor: [10, 55],
-    popupAnchor: [10, -44],
-    iconSize: [45, 45]
+    iconAnchor: [25, 50],
+    popupAnchor: [0, -50],
+    iconSize: [50, 50]
   });
-
-  function LocationMarker() {
-    const [position, setPosition] = useState(null);
-    const map = useMapEvents({
-      click() {
-        map.locate();
-      },
-      locationfound(e) {
-        setPosition(e.latlng);
-        map.flyTo(e.latlng, map.getZoom());
-      }
-    });
-
-    return position === null ? null : (
-      <Marker position={position} icon={newicon}>
-        <Popup>You are here</Popup>
-      </Marker>
-    );
-  }
 
   const MAP_PROVIDERS = {
     google: {
@@ -121,7 +104,7 @@ export default () => {
     {
       attribution: '&copy; Google',
       name: MAP_PROVIDERS.google.satellite,
-      checked: false,
+      checked: true,
       url: '//mt.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
       crs: L.CRS.EPSG3857
     },
@@ -136,7 +119,7 @@ export default () => {
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       name: MAP_PROVIDERS.osm,
-      checked: true,
+      checked: false,
       url: '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       crs: L.CRS.EPSG3857
     }
@@ -169,46 +152,47 @@ export default () => {
 
   const history = useSelector(store => store.history);
 
+  useEffect(() => {
+    setStartButton(true);
+  }, [history]);
+
   let instance;
   function handleAddMarkerClick() {
     setStartButton(false);
 
-    if (history && history.length > 0) {
-      const waypoints = history.map(route => L.latLng(route[0], route[1]));
+    // if (history && history.length > 0) {
+    //   const waypoints = history.map(route => L.latLng(route[0], route[1]));
 
-      console.log("Waypoints: ", waypoints);
-
-      L.Routing.control({
-        waypoints,
-        routeWhileDragging: true,
-        show: false,
-        addWaypoints: false,
-        createMarker: () => null
-      }).addTo(mapContext);
-    }
+    //   L.Routing.control({
+    //     waypoints,
+    //     routeWhileDragging: true,
+    //     show: false,
+    //     addWaypoints: false,
+    //     createMarker: () => null
+    //   }).addTo(mapContext);
+    // }
 
 
-    // instance = L.motion.polyline(
-    //   history,
-    //   {
-    //     color: 'red'
-    //   },
-    //   {
-    //     auto: true,
-    //     duration: 40000
-    //   },
-    //   {
-    //     removeOnEnd: false,
-    //     showMarker: true,
-    //     icon: L.icon({
-    //       iconUrl:
-    //         'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Circle-icons-car.svg/1200px-Circle-icons-car.svg.png',
-    //       iconSize: [20, 30]
-    //     })
-    //   }
-    // );
+    instance = L.motion.polyline(
+      history,
+      {
+        color: 'red'
+      },
+      {
+        auto: true,
+        duration: 40000
+      },
+      {
+        removeOnEnd: false,
+        showMarker: true,
+        icon: L.icon({
+          iconUrl: '../../../images/circle-icon-car.png',
+          iconSize: [20, 30]
+        })
+      }
+    );
 
-    // mapContext && mapContext.addLayer(instance);
+    mapContext && mapContext.addLayer(instance);
   }
 
   const [playButton, setPlayButton] = useState(true);
@@ -269,32 +253,14 @@ export default () => {
     setDeviceRoutes(devices.map(device => device.lastLocations.map(location => [location.lat, location.lng])));
   }, [devices]);
 
-  function Routing({ deviceRoutes }) {
-    useEffect(() => {
-      if (deviceRoutes && deviceRoutes.length > 0) {
-        const waypoints = deviceRoutes.map(route => L.latLng(route[0], route[1]));
-  
-        L.Routing.control({
-          waypoints,
-          routeWhileDragging: true,
-          show: false,
-          addWaypoints: false,
-          createMarker: () => null 
-        }).addTo(mapContext);
-      }
-    }, [deviceRoutes, mapContext]);
-  
-    return null;
-  }
-
   return (
     <>
       <Fragment>
         <MapContainer
           style={styleMap}
           center={{ lat: 4.831111, lng: -75.697815 }}
-          zoom={6}
-          zoomControl={false}
+          zoom={16}
+          zoomControl={true}
           whenReady={event => setMapContext(event.target)}
           whenCreated={mapInstance => {
             mapRef.current = mapInstance;
@@ -343,16 +309,60 @@ export default () => {
             );
           })}
 
-          {devices.map(({ id, placa, lng, lat, fecha, hora, speed }) => {
+          {devices.map(({ id, placa, lng, lat, fecha, hora, speed, isParked }) => {
             return lat > '' ? (
-              <Marker key={id} position={[lat, lng]} icon={newicon}>
-                <Popup>
-                  <div style={{ fontSize: '0.5em' }}>
-                    <p>{placa}</p>
+              <Marker 
+                key={id}
+                position={[lat, lng]}
+                icon={newicon}
+              >
+                <Tooltip
+                  permanent
+                  opacity={0.7}
+                  direction="bottom"
+                >
+                  <strong>{placa} {' '} ({speed} km/h)</strong>
+                </Tooltip>
+                <Popup onOpen={() => getAdress(lat, lng)}>
+                  <div style={{ fontSize: '0.3em' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <p style={{
+                        width: '30%',
+                        backgroundColor: 'white',
+                        color: 'black',
+                        textAlign: 'center',
+                        padding: '5px',
+                        borderRadius: '3px',
+                        fontWeight: 'bold',
+                        border: '1px solid black',
+                        margin: '0px',
+                        marginLeft: 'auto',
+                      }}>{placa}</p>
+
+                      <p style={{
+                        width: '65%',
+                        color: 'black',
+                        textAlign: 'center',
+                        margin: '0px',
+                        marginTop: '5px',
+                      }}>{ isParked ? (
+                        <p style={{
+                          margin: '0px',
+                          marginTop: '0px',
+                        }}>Parqueado <GiStopSign style={{ color: 'red' }} /></p>
+                      ) : 
+                        <p style={{
+                          margin: '0px',
+                          marginTop: '0px',
+                        }}>En movimiento <GiUpCard style={{ color: 'black' }} /></p>
+                      }</p>
+                    </div>
+                    
                     <hr />
+
                     <p><strong>Última conexión:</strong> {fecha}, {hora}</p>
                     <p><strong>Velocidad:</strong> {speed} km/h</p>
-                    <p><strong>Dirección:</strong> { getAdress(lat, lng) } { address }</p>
+                    <p><strong>Dirección:</strong> { address }</p>
                     <p><strong>Coordenadas:</strong> <a href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`} target="_blank" rel="noopener noreferrer">{lat}, {lng}</a></p>
                   </div>
                 </Popup>
@@ -362,10 +372,10 @@ export default () => {
             );
           })}
 
-          {deviceRoutes.map((routePoints, index) => (
+          {/* {deviceRoutes.map((routePoints, index) => (
             // <Polyline key={index} positions={routePoints} />
             <Routing deviceRoutes={routePoints} />
-          ))}
+          ))} */}
         </MapContainer>
 
         {history.length > 0 && (

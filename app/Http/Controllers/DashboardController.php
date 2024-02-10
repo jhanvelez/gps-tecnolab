@@ -65,6 +65,19 @@ class DashboardController extends Controller
                         'lat' => $location->track_lat,
                     ];
                 });
+        
+            // Obtén las últimas velocidades para este dispositivo
+            $lastSpeeds = Gpstrack::select('speed')
+                ->where('imei', $device->imei)
+                ->orderByDesc('id')
+                ->limit(5)  // Cambia este número al número de velocidades que quieras obtener
+                ->get()
+                ->pluck('speed');
+
+            // Verifica si todas las últimas velocidades son 0
+            $isParked = $lastSpeeds->every(function ($speed) {
+                return $speed == 0;
+            });
 
             return [
                 'id' => $device->id,
@@ -79,6 +92,7 @@ class DashboardController extends Controller
                 'speed' => $device->speed,
                 'connect' => ($date->diffInDays($now) > 0 && $diff_in_minutes > 5) ? false : true,
                 'lastLocations' => $lastLocations,
+                'isParked' => $isParked,
             ];
         });
         
@@ -149,6 +163,19 @@ class DashboardController extends Controller
                         'lat' => $location->track_lat,
                     ];
                 });
+            
+            // Obtén las últimas velocidades para este dispositivo
+            $lastSpeeds = Gpstrack::select('speed')
+                ->where('imei', $device->imei)
+                ->orderByDesc('id')
+                ->limit(5)  // Cambia este número al número de velocidades que quieras obtener
+                ->get()
+                ->pluck('speed');
+
+            // Verifica si todas las últimas velocidades son 0
+            $isParked = $lastSpeeds->every(function ($speed) {
+                return $speed == 0;
+            });
 
             return [
                 'id' => $device->id,
@@ -163,6 +190,7 @@ class DashboardController extends Controller
                 'speed' => $device->speed,
                 'connect' => ($date->diffInDays($now) > 0 && $diff_in_minutes > 5) ? false : true,
                 'lastLocations' => $lastLocations,
+                'isParked' => $isParked,
             ];
         });
 

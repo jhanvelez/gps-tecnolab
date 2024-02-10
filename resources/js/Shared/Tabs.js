@@ -20,6 +20,15 @@ export default ({}) => {
 
   const { devices, events, drivers, groups } = usePage().props;
 
+  // Fecha de hoy
+  const today = new Date();
+  const formattedToday = today.toISOString().split('T')[0];
+
+  // Fecha de hace 30 días
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(today.getDate() - 30);
+  const formattedThirtyDaysAgo = thirtyDaysAgo.toISOString().split('T')[0];
+
   const styleObj = {
     fontSize: 13,
     textAlign: 'center'
@@ -89,9 +98,14 @@ export default ({}) => {
 
   const [historial, setHistorial] = useState([]);
 
+  const [loading, setLoading] = useState(false);
+
   let positions = [];
   async function searchInfo(e) {
     e.preventDefault();
+
+    setLoading(true);
+    setHistorial([]);
 
     try {
       const res = await fetch(
@@ -104,6 +118,7 @@ export default ({}) => {
 
       const data = await res.json();
       setHistorial([...data.history]);
+      setLoading(false);
 
       let speeds = [];
       data.history.forEach(position => {
@@ -366,6 +381,8 @@ export default ({}) => {
                     label="Fecha Inicial"
                     name="fecha_inicial"
                     type="date"
+                    min={formattedThirtyDaysAgo}
+                    max={formattedToday}
                     errors={errors2.fecha_inicial}
                     value={data2.fecha_inicial}
                     onChange={e => setData2('fecha_inicial', e.target.value)}
@@ -377,6 +394,8 @@ export default ({}) => {
                     label="Fecha Final"
                     name="fecha_final"
                     type="date"
+                    min={formattedThirtyDaysAgo}
+                    max={formattedToday}
                     errors={errors2.fecha_final}
                     value={data2.fecha_final}
                     onChange={e => setData2('fecha_final', e.target.value)}
@@ -385,7 +404,11 @@ export default ({}) => {
               </div>
 
               <div className="d-flex justify-content-end">
-                <Button type="submit">Buscar</Button>
+                <Button type="submit" disabled={loading}>
+                  {loading ? (
+                    <span className="loader"></span>
+                  ) : ('Buscar')}
+                </Button>
               </div>
             </fieldset>
           </form>

@@ -140,24 +140,24 @@ export default () => {
         <div className="container">
             <div className="row">
                 <div className="col-lg-8 mb-4 mx-auto text-center">
-                    <a href="https://www.creative-tim.com/?_ga=2.242299972.757293697.1638911086-1528502635.1638911086" target="_blank" className="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
+                    <a href="https://tecnolab.com.co/our-crew" target="_blank" className="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
                       Compañia
                     </a>
-                    <a href="https://www.creative-tim.com/presentation" target="_blank" className="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
+                    <a href="https://tecnolab.com.co/" target="_blank" className="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
                       Equipo
                     </a>
-                    <a href="https://www.creative-tim.com/templates" target="_blank" className="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
+                    <a href="https://tecnolab.com.co/" target="_blank" className="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
                       Productos
                     </a>
                 </div>
                 <div className="col-lg-8 mx-auto text-center mb-4 mt-2">
-                    <a href="https://twitter.com/CreativeTim" target="_blank" className="text-secondary me-xl-4 me-4">
+                    <a href="https://tecnolab.com.co/" target="_blank" className="text-secondary me-xl-4 me-4">
                       <span className="text-lg fab fa-twitter" aria-hidden="true"></span>
                     </a>
-                    <a href="https://www.instagram.com/creativetimofficial/" target="_blank" className="text-secondary me-xl-4 me-4">
+                    <a href="https://tecnolab.com.co/" target="_blank" className="text-secondary me-xl-4 me-4">
                       <span className="text-lg fab fa-instagram" aria-hidden="true"></span>
                     </a>
-                    <a href="https://github.com/creativetimofficial" target="_blank" className="text-secondary me-xl-4 me-4">
+                    <a href="https://tecnolab.com.co/" target="_blank" className="text-secondary me-xl-4 me-4">
                       <span className="text-lg fab fa-github" aria-hidden="true"></span>
                     </a>
                 </div>
